@@ -5,7 +5,6 @@ from selenium import webdriver
 
 excel_file_location = "Properties.xlsx"
 
-
 class RightMoveScraper:
     excel_sheet = "rightmove"
     row_index = 2
@@ -30,9 +29,9 @@ class RightMoveScraper:
             self.row_index += 1
         
 
-    def convert_url(self, anchor_id):
+    def convert_url(self, href):
         base_url = 'https://www.rightmove.co.uk/properties/'
-        return base_url + anchor_id[4:]
+        return base_url + href[4:]
 
 class ZooplaScraper:
     excel_sheet = "zoopla"
@@ -45,7 +44,16 @@ class ZooplaScraper:
         dr = webdriver.Chrome()
         dr.get(self.website_url)
         page_soup = BeautifulSoup(dr.page_source, 'html.parser')
-        print(page_soup)
+        page_listings = page_soup.find_all('a', class_='_1maljyt1')
+
+        for listing in page_listings:
+            listing_url = self.convert_url(listing['href'])
+            write_excel('zoopla', self.row_index, listing_url)
+            self.row_index += 1
+    
+    def convert_url(self, href):
+        base_url = 'https://www.zoopla.co.uk'
+        return base_url + href
 
 def write_excel(sheet_name, sheet_index, url):
     wb = openpyxl.load_workbook(excel_file_location)
@@ -57,24 +65,11 @@ def write_excel(sheet_name, sheet_index, url):
     wb.close()
 
 def main():
-    #rightmove_scraper = RightMoveScraper()
-    #rightmove_scraper.do_scrape()
+    rightmove_scraper = RightMoveScraper()
+    rightmove_scraper.do_scrape()
 
     zoopla_scraper = ZooplaScraper()
     zoopla_scraper.do_scrape()
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
-#zoopla_url = "https://www.zoopla.co.uk/for-sale/property/cheshire/?price_max=450000&price_min=350000&q=Cheshire&results_sort=newest_listings&search_source=home"
-
-"""zoopla_page = requests.get(zoopla_url, headers=headers)
-print(zoopla_page)
-
-zoopla_soup = BeautifulSoup(zoopla_page.content, 'html.parser')
-
-zoopla_listings = zoopla_soup.find_all('a', class_='listing-results-price text-price')"""
