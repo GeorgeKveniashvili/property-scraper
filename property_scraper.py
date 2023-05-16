@@ -8,8 +8,8 @@ excel_file_location = 'Properties.xlsx'
 
 class RightMoveScraper:
     location = 'REGION%5E87490'
-    min_price = '80000'
-    max_price = '80000'
+    min_price = '350000'
+    max_price = '450000'
     excel_sheet = 'rightmove'
     row_index = 2
     website_url = 'https://www.rightmove.co.uk/property-for-sale/find.html?locationIdentifier={location}&maxPrice={max_price}&minPrice={min_price}&includeSSTC=false'
@@ -138,11 +138,11 @@ def main():
     rightmove_scraper = RightMoveScraper()
     rightmove_scraper.do_scrape()
 
-    """zoopla_scraper = ZooplaScraper()
+    zoopla_scraper = ZooplaScraper()
     zoopla_scraper.do_scrape()
 
     halman_scraper = HalmanScraper()
-    halman_scraper.do_scrape()"""
+    halman_scraper.do_scrape()
 
 if __name__ == "__main__":
     main()
