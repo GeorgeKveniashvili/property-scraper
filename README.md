@@ -1,9 +1,9 @@
 # Real Estate Scraper
 
 The script scrapes following websites and extracts URLs of a new listings with predefined criteria
-- www.gascoignehalman.co.uk
-- www.zoopla.co.uk
 - www.rightmove.co.uk
+- www.zoopla.co.uk
+- www.gascoignehalman.co.uk
 
 ---
 
