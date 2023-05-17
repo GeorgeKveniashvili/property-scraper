@@ -1,18 +1,22 @@
 import openpyxl
 import time
+from datetime import datetime
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
+# Location of the excel file to write to
 excel_file_location = 'Properties.xlsx'
 
 class RightMoveScraper:
+    # Editable parameters
     location = 'REGION%5E87490'
     min_price = '350000'
-    max_price = '450000'
+    max_price = '350000'
+
+    website_url = 'https://www.rightmove.co.uk/property-for-sale/find.html?locationIdentifier={prop_location}&maxPrice={prop_max_price}&minPrice={prop_min_price}&includeSSTC=false'.format(prop_location=location, prop_max_price=max_price, prop_min_price=min_price)
     excel_sheet = 'rightmove'
     row_index = 2
-    website_url = 'https://www.rightmove.co.uk/property-for-sale/find.html?locationIdentifier={location}&maxPrice={max_price}&minPrice={min_price}&includeSSTC=false'
     
     def do_scrape(self):
         print('Scraping rightmove.co.uk')
@@ -39,6 +43,8 @@ class RightMoveScraper:
 
             dr.execute_script("arguments[0].click();", next_button)
             time.sleep(2)
+
+        dr.close()
 
     def convert_url(self, href):
         base_url = 'https://www.rightmove.co.uk/properties/'
@@ -72,17 +78,14 @@ class ZooplaScraper:
         return base_url + href
     
 class HalmanScraper:
+    website_url = 'https://www.gascoignehalman.co.uk/search/?showstc=on&showsold=on&instruction_type=Sale&place=cheadle&ajax_border_miles=1&minprice=350000&maxprice=450000'
     excel_sheet = 'gascoignehalman'
     row_index = 2
-    website_page_index = 0
-    max_page_index = 24
-    website_url = 'https://www.gascoignehalman.co.uk/search/?showstc=on&showsold=on&instruction_type=Sale&place=cheadle&ajax_border_miles=1&minprice=350000&maxprice=450000'
-    
+
     def do_scrape(self):
         print('Scraping gascoignehalman.co.uk')
 
         dr = webdriver.Chrome()
-        #dr.maximize_window()
         dr.get(self.website_url)
         time.sleep(1)
         previous_height = dr.execute_script('return document.body.scrollHeight')
@@ -111,8 +114,6 @@ class HalmanScraper:
             except:
                 break
         
-        dr.close()
-        
         page_soup = BeautifulSoup(dr.page_source, 'html.parser')
         page_listings = page_soup.find_all('a', class_='btn btn-red')
 
@@ -121,6 +122,8 @@ class HalmanScraper:
             write_excel(self.excel_sheet, self.row_index, listing_url)
             self.row_index += 1
     
+        dr.close()
+
     def convert_url(self, href):
         base_url = 'https://www.gascoignehalman.co.uk'
         return base_url + href
@@ -134,7 +137,26 @@ def write_excel(sheet_name, sheet_index, url):
     wb.save(excel_file_location)
     wb.close()
 
+def create_excel():
+    global excel_file_location
+
+    wb = openpyxl.Workbook()
+    sheet = wb.active
+    sheet.title = 'rightmove'
+    sheet2 = wb.create_sheet(title='zoopla')
+    sheet3 = wb.create_sheet(title='gascoignehalman')
+
+    sheet['A1'] = 'URL'
+    sheet2['A1'] = 'URL'
+    sheet3['A1'] = 'URL'
+
+    excel_file_location = "Properties_{sys_time}.xlsx".format(sys_time=datetime.today().strftime('%Y-%m-%d'))
+    wb.save(excel_file_location)
+    wb.close()
+
 def main():
+    create_excel()
+
     rightmove_scraper = RightMoveScraper()
     rightmove_scraper.do_scrape()
 
