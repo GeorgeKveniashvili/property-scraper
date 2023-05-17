@@ -150,7 +150,7 @@ def create_excel():
     sheet2['A1'] = 'URL'
     sheet3['A1'] = 'URL'
 
-    excel_file_location = "Properties_{sys_time}.xlsx".format(sys_time=datetime.today().strftime('%Y-%m-%d'))
+    excel_file_location = "Properties_{sys_time}.xlsx".format(sys_time=datetime.today().strftime('%Y-%m-%d_%H-%M'))
     wb.save(excel_file_location)
     wb.close()
 
