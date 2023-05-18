@@ -5,16 +5,16 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
-# Location of the excel file to write to
+# Default location of the excel file to write to
 excel_file_location = 'Properties.xlsx'
 
 class RightMoveScraper:
     # Editable parameters
-    location = 'REGION%5E87490'
+    location = 'REGION%5E305'
     min_price = '350000'
     max_price = '450000'
 
-    website_url = 'https://www.rightmove.co.uk/property-for-sale/find.html?locationIdentifier={prop_location}&maxPrice={prop_max_price}&minPrice={prop_min_price}&includeSSTC=false'.format(prop_location=location, prop_max_price=max_price, prop_min_price=min_price)
+    website_url = 'https://www.rightmove.co.uk/property-for-sale/find.html?locationIdentifier={prop_location}&radius=0.0&maxPrice={prop_max_price}&minPrice={prop_min_price}&includeSSTC=false'.format(prop_location=location, prop_max_price=max_price, prop_min_price=min_price)
     excel_sheet = 'rightmove'
     row_index = 2
     
@@ -51,7 +51,8 @@ class RightMoveScraper:
         return base_url + href[4:]
 
 class ZooplaScraper:
-    location = 'london'
+    # Editable parameters
+    location = 'cheadle'
     min_price = '350000'
     max_price = '450000'
     
@@ -101,7 +102,12 @@ class ZooplaScraper:
         return base_url + href.split('/?')[0]
     
 class HalmanScraper:
-    website_url = 'https://www.gascoignehalman.co.uk/search/?showstc=on&showsold=on&instruction_type=Sale&place=cheadle&ajax_border_miles=1&minprice=350000&maxprice=450000'
+    # Editable parameters
+    location = 'cheadle'
+    min_price = '350000'
+    max_price = '450000'
+
+    website_url = 'https://www.gascoignehalman.co.uk/search/?showstc=on&showsold=on&instruction_type=Sale&place={prop_location}&ajax_border_miles=1&minprice={prop_min_price}&maxprice={prop_max_price}'.format(prop_location=location, prop_min_price=min_price, prop_max_price=max_price)
     excel_sheet = 'gascoignehalman'
     row_index = 2
 
