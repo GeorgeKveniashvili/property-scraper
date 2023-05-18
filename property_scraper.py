@@ -72,9 +72,6 @@ class ZooplaScraper:
         while True:
             dr = webdriver.Chrome()
             website_url = 'https://www.zoopla.co.uk{uri}&pn={page_number}'.format(uri=website_uri, page_number=self.page_number)
-            print(website_url)
-            print(self.page_number)
-
             dr.get(website_url)
             time.sleep(3)
 
@@ -181,16 +178,16 @@ def create_excel():
     wb.close()
 
 def main():
-    """create_excel()
+    create_excel()
 
     rightmove_scraper = RightMoveScraper()
-    rightmove_scraper.do_scrape()"""
+    rightmove_scraper.do_scrape()
 
     zoopla_scraper = ZooplaScraper()
     zoopla_scraper.do_scrape()
 
-    #halman_scraper = HalmanScraper()
-    #halman_scraper.do_scrape()
+    halman_scraper = HalmanScraper()
+    halman_scraper.do_scrape()
 
 if __name__ == "__main__":
     main()
