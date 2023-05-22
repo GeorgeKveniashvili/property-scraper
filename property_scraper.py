@@ -111,7 +111,22 @@ class RightMoveScraper:
 
             for listing in page_listings:
                 listing_url = self.convert_url(listing['id'])
-                write_excel(self.excel_sheet, self.row_index, listing_url)
+                listing_desc = listing.find_next_sibling('div')
+
+                try:
+                    listing_address = listing_desc.find('address', class_='propertyCard-address').getText()
+                except:
+                    listing_address = 'Could not get address'
+                try:
+                    listing_title = listing_desc.find('span', attrs={'data-test': 'property-description'}).find('span').getText()
+                except:
+                    listing_title = 'Could not get title'
+                try:
+                    listing_price = listing_desc.find('div', class_='propertyCard-priceValue').getText()
+                except:
+                    listing_price = 'Could not get price'
+
+                write_excel(self.excel_sheet, self.row_index, listing_url, listing_address, listing_title, listing_price)
                 self.row_index += 1
             
             try:
@@ -238,13 +253,13 @@ def create_excel():
 def main():
     create_excel()
 
-    zoopla_scraper = ZooplaScraper()
-    zoopla_scraper.do_scrape()
+    """zoopla_scraper = ZooplaScraper()
+    zoopla_scraper.do_scrape()"""
 
-    """rightmove_scraper = RightMoveScraper()
+    rightmove_scraper = RightMoveScraper()
     rightmove_scraper.do_scrape()
 
-    halman_scraper = HalmanScraper()
+    """halman_scraper = HalmanScraper()
     halman_scraper.do_scrape()"""
 
     print('Script ended')
