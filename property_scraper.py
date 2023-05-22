@@ -53,7 +53,21 @@ class ZooplaScraper:
 
             for listing in page_listings:
                 listing_url = self.convert_url(listing['href'])
-                write_excel(self.excel_sheet, self.row_index, listing_url)
+                listing_desc = listing.find('div', class_='_1ankud50')
+                try:
+                    listing_address = listing_desc.find('h3').getText()
+                except:
+                    listing_address = 'Could not get address'
+                try:
+                    listing_title = listing_desc.find('h2').getText()
+                except:
+                    listing_title = 'Could not get title'
+                try:
+                    listing_price = listing.find('p', class_='_170k6632').getText()
+                except:
+                    listing_price = 'Could not get price'
+                
+                write_excel(self.excel_sheet, self.row_index, listing_url, listing_address, listing_title, listing_price)
                 self.row_index += 1
             
             try:
@@ -180,11 +194,14 @@ class HalmanScraper:
         base_url = 'https://www.gascoignehalman.co.uk'
         return base_url + href
 
-def write_excel(sheet_name, sheet_index, url):
+def write_excel(sheet_name, sheet_index, url, address, title, price):
     wb = openpyxl.load_workbook(excel_file_location)
     ws = wb[sheet_name]
 
     ws.cell(row=sheet_index, column=1).value = url
+    ws.cell(row=sheet_index, column=2).value = address
+    ws.cell(row=sheet_index, column=3).value = title
+    ws.cell(row=sheet_index, column=4).value = price
 
     wb.save(excel_file_location)
     wb.close()
@@ -202,6 +219,18 @@ def create_excel():
     sheet2['A1'] = 'URL'
     sheet3['A1'] = 'URL'
 
+    sheet['B1'] = 'Address'
+    sheet2['B1'] = 'Address'
+    sheet3['B1'] = 'Address'
+
+    sheet['C1'] = 'Title'
+    sheet2['C1'] = 'Title'
+    sheet3['C1'] = 'Title'
+
+    sheet['D1'] = 'Price'
+    sheet2['D1'] = 'Price'
+    sheet3['D1'] = 'Price'
+
     excel_file_location = "Properties_{sys_time}.xlsx".format(sys_time=datetime.today().strftime('%Y-%m-%d_%H-%M'))
     wb.save(excel_file_location)
     wb.close()
@@ -212,11 +241,11 @@ def main():
     zoopla_scraper = ZooplaScraper()
     zoopla_scraper.do_scrape()
 
-    rightmove_scraper = RightMoveScraper()
+    """rightmove_scraper = RightMoveScraper()
     rightmove_scraper.do_scrape()
 
     halman_scraper = HalmanScraper()
-    halman_scraper.do_scrape()
+    halman_scraper.do_scrape()"""
 
     print('Script ended')
 
