@@ -323,60 +323,88 @@ class HalmanScraper:
         base_url = 'https://www.gascoignehalman.co.uk'
         return base_url + href
 
+# Insert a new row to Excel file
 def write_excel(sheet_name, sheet_index, url, address, title, price):
+    # Open existing file
     wb = openpyxl.load_workbook(excel_file_location)
+    # Load the requested sheet
     ws = wb[sheet_name]
 
+    # Insert URL in the first column
     ws.cell(row=sheet_index, column=1).value = url
+    # Insert address in the second column
     ws.cell(row=sheet_index, column=2).value = address
+    # Insert title in the third column
     ws.cell(row=sheet_index, column=3).value = title
+    # Insert price in the fourth column
     ws.cell(row=sheet_index, column=4).value = price
 
+    # Save the file
     wb.save(excel_file_location)
+    # Exit the Excel
     wb.close()
 
+# Create a new Excel file with date and time in name
 def create_excel():
     global excel_file_location
-
+    
+    # Open Excel
     wb = openpyxl.Workbook()
+    # Get first sheet
     sheet = wb.active
+    # Rename the sheet
     sheet.title = 'zoopla'
+    # Create the second sheet
     sheet2 = wb.create_sheet(title='rightmove')
+    # Create the third sheet
     sheet3 = wb.create_sheet(title='gascoignehalman')
 
+    # Write the first column title
     sheet['A1'] = 'URL'
     sheet2['A1'] = 'URL'
     sheet3['A1'] = 'URL'
 
+    # Write the second column title
     sheet['B1'] = 'Address'
     sheet2['B1'] = 'Address'
     sheet3['B1'] = 'Address'
 
+    # Write the third column title
     sheet['C1'] = 'Title'
     sheet2['C1'] = 'Title'
     sheet3['C1'] = 'Title'
 
+    # Write the fourth column title
     sheet['D1'] = 'Price'
     sheet2['D1'] = 'Price'
     sheet3['D1'] = 'Price'
 
+    # Create a file name
     excel_file_location = "Properties_{sys_time}.xlsx".format(sys_time=datetime.today().strftime('%Y-%m-%d_%H-%M'))
+    # Save to that file name
     wb.save(excel_file_location)
+    # Exit the Excel
     wb.close()
 
+# Starting method
 def main():
+    # Create a new Excel file
     create_excel()
 
+    # Scrape zoopla.co.uk
     zoopla_scraper = ZooplaScraper()
     zoopla_scraper.do_scrape()
 
+    # Scrape rightmove.co.uk
     rightmove_scraper = RightMoveScraper()
     rightmove_scraper.do_scrape()
 
+    # Scrape gascoignehalman.co.uk
     halman_scraper = HalmanScraper()
     halman_scraper.do_scrape()
 
     print('Script ended')
 
+# Run the main starting method
 if __name__ == "__main__":
     main()
