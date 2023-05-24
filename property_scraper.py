@@ -28,7 +28,7 @@ class ZooplaScraper:
         dr.maximize_window()
         dr.get(self.website_url_getter)
         try:
-            WebDriverWait(dr, 120).until(
+            WebDriverWait(dr, 60).until(
                 EC.presence_of_element_located((By.TAG_NAME, 'pre'))
                 )
         except:
@@ -41,7 +41,7 @@ class ZooplaScraper:
             website_url = 'https://www.zoopla.co.uk{uri}&pn={page_number}'.format(uri=website_uri, page_number=self.page_number)
             dr.get(website_url)
             try:
-                WebDriverWait(dr, 120).until(
+                WebDriverWait(dr, 60).until(
                     EC.presence_of_element_located((By.CLASS_NAME, '_1maljyt1'))
                     )
             except:
@@ -79,7 +79,7 @@ class ZooplaScraper:
                 break
 
             self.page_number += 1
-            #dr.close()
+            time.sleep(1)
         
         dr.close()
     
@@ -200,7 +200,22 @@ class HalmanScraper:
 
         for listing in page_listings:
             listing_url = self.convert_url(listing['href'])
-            write_excel(self.excel_sheet, self.row_index, listing_url)
+            listing_desc = listing.parent.parent.find_previous_sibling('div', class_='panel-body')
+
+            try:
+                listing_address = listing_desc.find('h2').getText()
+            except:
+                listing_address = 'Could not get address'
+            try:
+                listing_title = listing_desc.find('p').getText()
+            except:
+                listing_title = 'Could not get title'
+            try:
+                listing_price = listing_desc.find('h3').getText()
+            except:
+                listing_price = 'Could not get price'
+
+            write_excel(self.excel_sheet, self.row_index, listing_url, listing_address, listing_title, listing_price)
             self.row_index += 1
     
         dr.close()
@@ -253,14 +268,14 @@ def create_excel():
 def main():
     create_excel()
 
-    """zoopla_scraper = ZooplaScraper()
-    zoopla_scraper.do_scrape()"""
+    zoopla_scraper = ZooplaScraper()
+    zoopla_scraper.do_scrape()
 
     rightmove_scraper = RightMoveScraper()
     rightmove_scraper.do_scrape()
 
-    """halman_scraper = HalmanScraper()
-    halman_scraper.do_scrape()"""
+    halman_scraper = HalmanScraper()
+    halman_scraper.do_scrape()
 
     print('Script ended')
 
